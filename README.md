@@ -10,7 +10,7 @@ GrindRoom is a text-presence, browser-based accountability app for students and 
 
 ## 🧠 What It Does (Core Loop)
 
-1. User lands on `grindroom.app` → sees live public rooms with active user counts
+1. User lands on `grindroom.pages.dev` → sees live public rooms with active user counts
 2. Clicks a room → signs in with Google (one click)
 3. Declares their task: *"Reading Physics NCERT Ch 12"*
 4. Picks a timer: 25 / 50 / 90 min or custom
@@ -197,28 +197,35 @@ IF completed = false:
 
 ---
 
-## 🎨 Design System
+## 🎨 Design System v2 — StudyRoom
+Dark mode only. Architectural, not atmospheric.
+TokenValueUsage--bg-base#08090EPage background — near-void black--bg-surface#0E1117Cards, panels, modals--bg-raised#13181FElevated elements, dropdowns--bg-hover#181E27Hover state backgrounds--border-subtlergba(255,255,255,0.06)Dividers, quiet separators--border-defaultrgba(255,255,255,0.10)Card borders, inputs--border-focusrgba(255,255,255,0.22)Active/focused element borders--primary#E8A847CTAs, links, active states — warm amber--primary-mutedrgba(232,168,71,0.10)Active row backgrounds, badges--primary-hover#F0B85AButton hover, link hover--success#22C55EStreaks, live indicator, online--success-mutedrgba(34,197,94,0.10)Success badge backgrounds--warning#F97316Caution states--danger#EF4444Distracted state, destructive--text-high#EEE8D5Headings — warm white, not cold--text-mid#7A8BA8Labels, metadata, timestamps--text-low#3A4A60Placeholders, disabled states
 
-**Dark mode only. No toggle. No exceptions.**
+Typography — unchanged, still excellent
 
-| Token | Value | Usage |
-|---|---|---|
-| Background | `#0F172A` | Page background |
-| Surface | `#1E293B` | Cards, panels |
-| Border | `#334155` | Card borders, dividers |
-| Primary | `#6366F1` | Buttons, links, active states |
-| Success | `#10B981` | Streaks, done state, active indicator |
-| Warning | `#F59E0B` | Caution states |
-| Danger | `#EF4444` | Distracted state, destructive actions |
-| Text Primary | `#F8FAFC` | Headings, main content |
-| Text Secondary | `#94A3B8` | Labels, metadata, timestamps |
+Display / UI: Syne (Google Fonts)
+Body: DM Sans
+Timers & code: JetBrains Mono
 
-- Font: **Inter** (Google Fonts)
-- Timers use **monospace** font for digits
-- Corners: `rounded-xl` on cards
-- Active grinder rows: subtle **left green border** (`border-l-2 border-emerald-500`)
-- Transitions: `200ms` on all hover states
-- Tone: **calm and focused** — no flashy animations, no confetti explosions
+Shape & Depth — unchanged
+
+Cards: border-radius: 10px
+Shadows: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)
+Active rows: border-left: 2px solid #22C55E + background: var(--primary-muted)
+
+Motion — unchanged
+
+Transitions: 150ms ease
+Entrance: opacity + translateY(4px) only
+Hover lift: none
+
+Principles — unchanged + one addition
+
+No gradients on primary surfaces
+Spacing unit: 4px base
+Icon set: Lucide only
+Amber is used sparingly — buttons, active states, and key highlights only. Never as a fill on large surfaces.
+Tone: precise and focused
 
 ---
 
@@ -297,7 +304,3 @@ Do not implement these. They come post-launch based on real user feedback:
 - Leaderboards beyond friend circles
 
 ---
-
-## 📬 Contact
-
-Built by [your name] — [your Twitter/X handle]
