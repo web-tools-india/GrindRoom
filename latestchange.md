@@ -188,3 +188,10 @@ Why: This removes runtime dependency on CSS variable token references in the lan
 - Confirmed these pages already use hardcoded hex-based Tailwind classes for page/card/text/border colors, so no page-level palette class changes were required.
 
 Why: This validates the requested migration guardrail for the specified pages while preserving the currently allowed hardcoded palette and avoiding unnecessary churn.
+
+## 2026-03-11 (dashboard username onboarding gate after OAuth callback)
+- Updated `app/auth/callback/route.ts` to complete OAuth exchange, fetch the authenticated user, read `profiles.username`, and redirect to `/dashboard?setup=1` when username is missing (otherwise `/dashboard`).
+- Added `components/dashboard/DashboardClient.tsx` as a client-side coordinator for username onboarding modal state.
+- Updated `app/dashboard/page.tsx` to read `searchParams`, derive `needsUsernameSetup` from `setup=1`, and render `DashboardClient` at the top-level dashboard layout.
+
+Why: This ensures users without usernames are routed into a required setup flow immediately after authentication, while keeping username persistence in a client component that can refresh dashboard server data after save.
