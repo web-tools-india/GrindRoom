@@ -1,5 +1,24 @@
 # Latest Changes
 
+## 2026-03-11 (permanent Cloudflare build fix: disable prerender for Supabase-auth pages)
+- Added `export const dynamic = "force-dynamic"` to `app/page.tsx`, `app/rooms/page.tsx`, `app/dashboard/page.tsx`, `app/circles/page.tsx`, `app/room/[id]/page.tsx`, and `app/profile/[username]/page.tsx`.
+- Kept existing Supabase calls and UI behavior unchanged; only rendering mode was updated.
+
+Why: Cloudflare build had no env vars at build time and Next.js was prerendering authenticated Supabase pages, which executed env guards during static export and crashed deploys. Forcing dynamic rendering prevents build-time execution of those page data fetches and removes this deploy blocker permanently.
+
+## 2026-03-11 (follow-up Cloudflare deploy fix: middleware Supabase env type narrowing)
+- Updated `middleware.ts` to read `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` inside the `middleware()` function and guard before `createServerClient(...)`.
+- Retained existing protected-route matching and cookie sync behavior, with no auth-flow signature changes.
+
+Why: After fixing `lib/supabase/server.ts`, the Cloudflare build surfaced the same TypeScript `string | undefined` overload error in `middleware.ts`. This follow-up removes that blocker so the deploy pipeline can continue.
+
+## 2026-03-11 (cloudflare build fix for Supabase server client type narrowing)
+- Updated `lib/supabase/server.ts` to read `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` inside `getSupabaseServerClient()` instead of at module scope.
+- Kept the existing runtime guard and moved it before `createServerClient(...)` so TypeScript narrows both values to `string` at call time.
+- Preserved the function signature and cookie handling behavior to avoid breaking server auth/session flows.
+
+Why: Cloudflare Pages build was still failing on `lib/supabase/server.ts` with `string | undefined` arguments passed into `createServerClient`. Function-scoped env reads + guard resolve the TypeScript overload error without changing runtime behavior.
+
 ## 2026-03-11 (env baseline + docs sync for recent API/RPC additions)
 - Updated `.env.example` so local setup explicitly includes `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_APP_URL=http://localhost:3000`, and a manual-fill placeholder for `SUPABASE_SERVICE_ROLE_KEY`.
 - Updated `README.md` project structure to include the OAuth callback route, newly added API handlers, `lib/supabase/admin.ts`, and newly added Supabase migration files.

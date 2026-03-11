@@ -3,6 +3,7 @@ import { RoomClient } from '@/components/room/RoomClient'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { Room } from '@/lib/types'
 
+export const dynamic = 'force-dynamic'
 type RoomListItem = Pick<Room, 'id' | 'name' | 'description' | 'emoji' | 'category' | 'active_count'>
 
 export default async function RoomsPage() {
