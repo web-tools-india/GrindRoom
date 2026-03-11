@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "npx @opennextjs/cloudflare@latest build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "preview:cloudflare": "npx @opennextjs/cloudflare@latest build && wrangler pages dev .open-next/assets"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",

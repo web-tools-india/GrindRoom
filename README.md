@@ -276,12 +276,18 @@ npm run dev
 
 1. Push code to GitHub
 2. Go to [pages.cloudflare.com](https://pages.cloudflare.com) → New Project → Connect GitHub repo
-3. Build settings:
-   - Framework: Next.js
-   - Build command: `npm run build`
-   - Output directory: `.next`
+3. Build settings (OpenNext for Cloudflare):
+   - Framework preset: **None**
+   - Build command: `npx @opennextjs/cloudflare@latest build`
+   - Build output directory: `/` (keep default in UI; `wrangler.toml` sets Pages output to `.open-next/assets`)
 4. Add all environment variables in Cloudflare Pages → Settings → Environment Variables
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `NEXT_PUBLIC_APP_URL` (set this to your Cloudflare domain, e.g. `https://grindroom.pages.dev`)
 5. Deploy — auto-assigned `.pages.dev` domain
+6. If you still see a blank page, open Cloudflare build logs and verify `.open-next/worker.js` is generated (this confirms SSR worker bundling happened)
+7. Also verify runtime environment variables are set for both **Production** and **Preview** before redeploying
 
 ---
 

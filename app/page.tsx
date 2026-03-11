@@ -8,20 +8,28 @@ export const dynamic = 'force-dynamic'
 type HomeRoom = Pick<Room, 'id' | 'name' | 'description' | 'emoji' | 'category' | 'active_count'>
 
 export default async function HomePage() {
-  const supabase = await getSupabaseServerClient()
+  const hasSupabaseEnv = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) && Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
-  const { data, error } = await supabase
-    .from('rooms')
-    .select('id, name, description, emoji, category, active_count')
-    .eq('is_public', true)
-    .order('active_count', { ascending: false })
-    .limit(3)
+  let liveRooms: HomeRoom[] = []
 
-  if (error) {
-    console.error('Failed to fetch top rooms:', error.message)
+  if (hasSupabaseEnv) {
+    const supabase = await getSupabaseServerClient()
+
+    const { data, error } = await supabase
+      .from('rooms')
+      .select('id, name, description, emoji, category, active_count')
+      .eq('is_public', true)
+      .order('active_count', { ascending: false })
+      .limit(3)
+
+    if (error) {
+      console.error('Failed to fetch top rooms:', error.message)
+    }
+
+    liveRooms = data ?? []
+  } else {
+    console.error('Landing page running without NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY.')
   }
-
-  const liveRooms: HomeRoom[] = data ?? []
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-high)]">
@@ -65,7 +73,15 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {liveRooms.length === 0 ? (
+          {!hasSupabaseEnv ? (
+            <div className="rounded-[10px] border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-6 text-[var(--text-high)] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)]">
+              <p className="font-medium">Deployment setup incomplete.</p>
+              <p className="mt-2 text-sm text-[var(--text-mid)]">
+                Add <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in Cloudflare Pages
+                environment variables, then redeploy.
+              </p>
+            </div>
+          ) : liveRooms.length === 0 ? (
             <div className="rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 text-[var(--text-mid)] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)]">
               No live rooms right now. Check back in a bit or create the first focused session.
             </div>

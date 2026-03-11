@@ -129,3 +129,30 @@ Why: The prior approach could leave `sessions` and `profiles` out of sync on par
 - Added `supabase/migrations/2026031104_complete_session_admin_rpc.sql` with a `SECURITY DEFINER` RPC (`complete_session_admin`) that keeps row-locking, idempotency, and atomic streak/session updates while restricting execution to `service_role` only.
 
 Why: This introduces a safe, explicit path for privileged writes without exposing service credentials to the client and preserves strict ownership validation before any elevated database operation runs.
+
+## 2026-03-11 (Cloudflare blank-page deployment fix)
+- Added Cloudflare-focused npm scripts in `package.json`:
+  - `build:cloudflare` to run `opennextjs-cloudflare build`
+  - `preview:cloudflare` to build and run `wrangler pages dev .open-next/assets`
+- Updated the Cloudflare deployment section in `README.md` to use OpenNext-compatible settings:
+  - Framework preset `None`
+  - Build command `npm run build:cloudflare`
+  - Output directory `.open-next/assets`
+  - Explicit required environment variables
+  - Verification step for `.open-next/worker.js` in build logs
+
+Why: The blank page happened because deployment was using Next.js-style build/output settings, which can publish static assets without the OpenNext SSR worker. Cloudflare Pages needs the OpenNext build pipeline so routes render correctly instead of serving an empty/blank app shell.
+
+## 2026-03-11 (blank page hardening + Cloudflare config alignment)
+- Updated `app/page.tsx` to handle missing Supabase public env variables gracefully instead of crashing the landing page render path.
+  - Added env presence guard before server-side room query.
+  - Added a visible in-app warning card that tells exactly which Cloudflare variables are missing.
+- Updated `package.json` Cloudflare scripts to match Cloudflare dashboard setup style:
+  - `build:cloudflare` now runs `npx @opennextjs/cloudflare@latest build`
+  - `preview:cloudflare` now uses the same command before local Pages preview.
+- Updated the Cloudflare deployment section in `README.md` to align with the shown dashboard values:
+  - Build command `npx @opennextjs/cloudflare@latest build`
+  - Build output directory `/` in UI, while clarifying that `wrangler.toml` still controls `.open-next/assets`
+  - Added explicit reminder to set env vars for both Production and Preview.
+
+Why: The previous change fixed build pipeline guidance, but deployment can still appear as a blank page when env vars are missing at runtime. This hardening makes the issue visible to users and aligns docs/scripts with the exact Cloudflare UI flow being used.
