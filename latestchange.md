@@ -44,3 +44,13 @@ Why: Creating a clean PR thread helps review/merge flow continue without losing 
 - Simplified the root layout markup to a minimal `<html><body>{children}</body></html>` wrapper.
 
 Why: The app shell should reflect GrindRoom branding and dark-mode defaults from first paint, while removing unnecessary font wiring and keeping the root layout lean/maintainable.
+
+## 2026-03-11 (rooms/dashboard/circles/profile route and UI scaffolding)
+- Added new App Router endpoints and pages for OAuth callback and core product surfaces: `app/auth/callback/route.ts`, `app/rooms/page.tsx`, `app/room/[id]/page.tsx`, `app/dashboard/page.tsx`, `app/circles/page.tsx`, and `app/profile/[username]/page.tsx`.
+- Added shared navigation/auth UX components in `components/shared/` (`Navbar`, `AuthModal`, `UsernameModal`, `CompletionModal`).
+- Added room-focused UI components (`RoomCard`, `RoomFilter`, `LiveCountBadge`, `RoomClient`, `ActiveGrinderRow`, `SessionStartCard`, `ActiveSessionCard`) with explicit interfaces and friendly empty states.
+- Added dashboard-focused UI components (`WeeklyHeatmap`, `CircleLeaderboard`) with loading skeletons and empty states.
+- Extended `lib/types.ts` with explicit interfaces for active grinders, room filters, heatmap data, leaderboard entries, and session-start payloads (no `any` usage).
+- Kept all new UI dark-token aligned using the requested palette values (`#0F172A`, `#1E293B`, `#334155`, etc.).
+
+Why: This creates the missing product structure needed to ship the authenticated multi-page GrindRoom experience, while enforcing strict typing and resilient loading/empty UI behavior for data-driven areas.
