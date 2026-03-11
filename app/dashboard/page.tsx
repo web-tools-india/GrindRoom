@@ -4,6 +4,8 @@ import { Navbar } from '@/components/shared/Navbar'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { CircleLeaderboardEntry, HeatmapDay } from '@/lib/types'
 
+export const runtime = 'edge'
+export const dynamic = 'force-dynamic'
 export default async function DashboardPage() {
   const supabase = await getSupabaseServerClient()
   const {

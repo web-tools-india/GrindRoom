@@ -1,9 +1,8 @@
-import { randomInt } from 'node:crypto'
-
 import { NextResponse } from 'next/server'
 
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
+export const runtime = 'edge'
 interface CreateCircleBody {
   name?: string
 }
@@ -33,11 +32,17 @@ function errorResponse(status: number, code: string, message: string, details?: 
   )
 }
 
+function getSecureRandomIndex(maxExclusive: number) {
+  const randomValues = new Uint32Array(1)
+  crypto.getRandomValues(randomValues)
+  return randomValues[0] % maxExclusive
+}
+
 function generateInviteCode() {
   let code = ''
 
   for (let i = 0; i < INVITE_CODE_LENGTH; i += 1) {
-    const randomIndex = randomInt(INVITE_CODE_CHARS.length)
+    const randomIndex = getSecureRandomIndex(INVITE_CODE_CHARS.length)
     code += INVITE_CODE_CHARS[randomIndex]
   }
 
