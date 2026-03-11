@@ -1,0 +1,54 @@
+# ============================================================
+# GrindRoom — Environment Variables Template
+# ============================================================
+# Copy this file to .env.local and fill in your real values.
+# NEVER commit .env.local to Git — it contains secrets.
+# This file (.env.example) is safe to commit — no real values here.
+# ============================================================
+
+# ------------------------------------------------------------
+# SUPABASE — Required. Get these from:
+# Supabase Dashboard → Project → Settings → API
+# ------------------------------------------------------------
+
+# Your Supabase project URL (safe to expose to browser)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+
+# Your Supabase anonymous/public key (safe to expose to browser, RLS protects data)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
+
+# Your Supabase service role key (SERVER ONLY — NEVER prefix with NEXT_PUBLIC_)
+# This key bypasses Row Level Security — treat it like a root database password.
+# Used ONLY in: lib/supabase/server.ts and app/api/* route handlers
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+
+# ------------------------------------------------------------
+# APP CONFIG — Optional, set per environment
+# ------------------------------------------------------------
+
+# The public URL of your deployed app (used for OAuth redirect URLs)
+# Local: http://localhost:3000
+# Production: https://grindroom.app
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# ------------------------------------------------------------
+# PAYMENTS — Add later, do not implement in MVP
+# ------------------------------------------------------------
+
+# Razorpay (India payments — UPI, cards)
+# RAZORPAY_KEY_ID=your_razorpay_key_id
+# RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+# NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
+
+# Stripe (International payments)
+# STRIPE_SECRET_KEY=sk_live_your_stripe_secret_key
+# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_your_stripe_publishable_key
+# STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+
+# ------------------------------------------------------------
+# ANALYTICS — Add later, do not implement in MVP
+# ------------------------------------------------------------
+
+# PostHog (product analytics)
+# NEXT_PUBLIC_POSTHOG_KEY=phc_your_posthog_key
+# NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
