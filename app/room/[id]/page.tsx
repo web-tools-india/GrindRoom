@@ -1,6 +1,5 @@
-import { ActiveSessionCard } from '@/components/room/ActiveSessionCard'
 import { RoomClient } from '@/components/room/RoomClient'
-import { SessionStartCard } from '@/components/room/SessionStartCard'
+import { RoomSessionManager } from '@/components/room/RoomSessionManager'
 import { Navbar } from '@/components/shared/Navbar'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { ActiveGrinder } from '@/lib/types'
@@ -44,7 +43,6 @@ export default async function RoomPage({ params }: RoomPageProps) {
     isActive: true,
   }))
 
-  const previewTimerEndAt = new Date(new Date().getTime() + 25 * 60_000).toISOString()
 
   return (
     <div className="min-h-screen bg-[#0F172A]">
@@ -58,8 +56,7 @@ export default async function RoomPage({ params }: RoomPageProps) {
           </div>
         </section>
         <aside className="space-y-4">
-          <SessionStartCard onStart={async () => Promise.resolve()} />
-          <ActiveSessionCard task="Current focus" timerEndAt={previewTimerEndAt} onComplete={async () => Promise.resolve()} />
+          <RoomSessionManager roomId={id} userId={user?.id ?? null} />
         </aside>
       </main>
     </div>
