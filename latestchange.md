@@ -1,5 +1,19 @@
 # Latest Changes
 
+
+## 2026-03-11 (Next.js Server Actions allowed origins expansion)
+- Updated `next.config.ts` `experimental.serverActions.allowedOrigins` to include all required hostnames: `grindroom.pages.dev`, `localhost:3000`, and `grindroom.app`.
+- Kept the rest of the Next.js config unchanged to avoid unintended runtime/build behavior changes.
+
+Why: Server Actions origin checks must explicitly allow each trusted domain used across local development and production/custom domains. This prevents blocked action requests while preserving origin-based security controls.
+
+
+## 2026-03-11 (root layout html lang + body typography utility classes)
+- Updated `app/layout.tsx` root markup to set `<html lang="en">`.
+- Updated the root `<body>` element to use `className="font-sans antialiased"` while keeping children rendering unchanged.
+
+Why: This improves accessibility/SEO language signaling and standardizes global typography smoothing via Tailwind utilities without restructuring the layout tree.
+
 ## 2026-03-11 (design token expansion + body font standardization)
 - Updated `app/globals.css` `body` font stack to use `font-family: 'DM Sans', sans-serif;` for consistent typography with the imported Google font.
 - Expanded the `@theme inline` token map to include full semantic color aliases for surface layers, status/action colors, and text hierarchy (`--color-surface`, `--color-raised`, `--color-hover`, `--color-primary`, `--color-primary-hover`, `--color-success`, `--color-warning`, `--color-danger`, `--color-text-high`, `--color-text-mid`, `--color-text-low`) while keeping existing `:root` variables unchanged.
