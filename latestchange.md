@@ -62,3 +62,11 @@ Why: This creates the missing product structure needed to ship the authenticated
 - Returned structured JSON responses with updated profile stats and explicit HTTP error statuses for auth, validation, ownership, not-found, conflict, and persistence failures.
 
 Why: Session completion and streak progression must be enforced server-side (not client-trusted) to keep focus analytics and streaks reliable under RLS and production auth constraints.
+
+## 2026-03-11 (session completion race-condition + atomicity hardening)
+- Reworked session completion to use a transactional Postgres RPC (`public.complete_session`) instead of separate route-level writes.
+- Added `supabase/migrations/2026031102_complete_session_rpc.sql` with row-level locking and `ended_at IS NULL` guarded update to prevent double-counting from concurrent requests.
+- Added idempotent behavior for already-completed sessions so retries return current session/profile aggregates safely without incrementing totals again.
+- Updated `app/api/session/complete/route.ts` to call the RPC and map database error codes to stable API responses.
+
+Why: The prior approach could leave `sessions` and `profiles` out of sync on partial failures and concurrent requests. Moving logic into one DB transaction prevents that inconsistency and makes retries safe.
