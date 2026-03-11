@@ -34,3 +34,13 @@ Why: New repository docs and conventions emphasize token-driven, dark-only styli
 - No functional code changes were introduced in this step; the latest landing-page implementation remains the active source of truth.
 
 Why: Creating a clean PR thread helps review/merge flow continue without losing the already-validated implementation context.
+
+## 2026-03-11 (root layout metadata and wrapper simplification)
+- Updated `app/layout.tsx` to remove the `next/font/google` Geist font imports and configuration.
+- Kept only the global stylesheet import (`import "./globals.css"`).
+- Set the root metadata title to `GrindRoom — Grind Together, Silently`.
+- Set the root metadata description to `Join a room. Declare your task. Grind with real people silently.`.
+- Added a dark theme color via exported viewport config (`themeColor: "#08090E"`) so browsers render a matching dark UI chrome.
+- Simplified the root layout markup to a minimal `<html><body>{children}</body></html>` wrapper.
+
+Why: The app shell should reflect GrindRoom branding and dark-mode defaults from first paint, while removing unnecessary font wiring and keeping the root layout lean/maintainable.
