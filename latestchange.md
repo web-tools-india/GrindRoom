@@ -1,5 +1,12 @@
 # Latest Changes
 
+## 2026-03-11 (env baseline + docs sync for recent API/RPC additions)
+- Updated `.env.example` so local setup explicitly includes `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_APP_URL=http://localhost:3000`, and a manual-fill placeholder for `SUPABASE_SERVICE_ROLE_KEY`.
+- Updated `README.md` project structure to include the OAuth callback route, newly added API handlers, `lib/supabase/admin.ts`, and newly added Supabase migration files.
+- Updated `README.md` local setup steps to list the exact minimum env vars and to run all required SQL migrations in order before seeding.
+
+Why: Recent circle/session backend features added new API routes and RPC migrations. The docs/env template needed to be synchronized so new contributors can boot the app correctly without missing required keys or SQL setup.
+
 ## 2026-03-11 (circle invite security + RLS-safe join lookup hardening)
 - Updated `app/api/circles/create/route.ts` to generate invite codes with cryptographic randomness using Node `crypto.randomInt` instead of `Math.random()`.
 - Added `supabase/migrations/2026031103_resolve_circle_by_invite_code_rpc.sql` introducing `public.resolve_circle_by_invite_code(text)` as a `SECURITY DEFINER` RPC that allows authenticated users to resolve a circle by invite code before they are members.

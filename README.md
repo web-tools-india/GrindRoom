@@ -51,18 +51,16 @@ GrindRoom is a text-presence, browser-based accountability app for students and 
 grindroom/
 ├── app/                        # Next.js App Router pages
 │   ├── page.tsx                # Landing page (public)
-│   ├── rooms/
-│   │   └── page.tsx            # Room discovery (auth required)
-│   ├── room/
-│   │   └── [id]/
-│   │       └── page.tsx        # Active grind room (core experience)
-│   ├── dashboard/
-│   │   └── page.tsx            # Personal stats + heatmap (auth required)
-│   ├── circles/
-│   │   └── page.tsx            # Friend circles + leaderboard (auth required)
-│   └── profile/
-│       └── [username]/
-│           └── page.tsx        # Public profile page
+│   ├── auth/callback/route.ts # OAuth callback exchange
+│   ├── rooms/page.tsx          # Room discovery (auth required)
+│   ├── room/[id]/page.tsx      # Active grind room (core experience)
+│   ├── dashboard/page.tsx      # Personal stats + heatmap (auth required)
+│   ├── circles/page.tsx        # Friend circles + leaderboard (auth required)
+│   ├── profile/[username]/page.tsx # Public profile page
+│   └── api/                    # Server route handlers
+│       ├── circles/create/route.ts # Create circle + invite code
+│       ├── circles/join/route.ts   # Join circle by invite code
+│       └── session/complete/route.ts # Complete session + streak updates
 │
 ├── components/
 │   ├── ui/                     # Shared UI primitives
@@ -73,7 +71,7 @@ grindroom/
 │   ├── room/                   # Room-specific components
 │   │   ├── ActiveGrinderRow.tsx    # Single user row: avatar + task + timer
 │   │   ├── SessionStartCard.tsx    # "What are you working on?" input UI
-│   │   └── ActiveTimerCard.tsx     # Countdown + Done/Distracted buttons
+│   │   └── ActiveSessionCard.tsx   # Countdown + Done/Distracted buttons
 │   ├── dashboard/
 │   │   ├── WeeklyHeatmap.tsx       # 7-day study grid (GitHub-style)
 │   │   └── CircleLeaderboard.tsx   # Ranked members table
@@ -83,13 +81,17 @@ grindroom/
 ├── lib/
 │   ├── supabase/
 │   │   ├── client.ts           # Browser Supabase client (singleton)
-│   │   └── server.ts           # Server-side Supabase client (SSR)
+│   │   ├── server.ts           # Server-side Supabase client (SSR)
+│   │   └── admin.ts            # Server-only admin client (service role)
 │   ├── types.ts                # TypeScript interfaces matching DB schema exactly
 │   └── utils.ts                # Streak calc, time formatting, class helpers
 │
 ├── supabase/
 │   ├── migrations/             # SQL migration files (run in order)
-│   │   └── 001_initial_schema.sql
+│   │   ├── 001_initial_schema.sql
+│   │   ├── 2026031102_complete_session_rpc.sql
+│   │   ├── 2026031103_resolve_circle_by_invite_code_rpc.sql
+│   │   └── 2026031104_complete_session_admin_rpc.sql
 │   └── seed.sql                # 8 default public rooms
 │
 ├── public/
@@ -248,10 +250,17 @@ npm install
 
 # 3. Set up environment variables
 cp .env.example .env.local
-# Fill in your Supabase URL, anon key, and service role key
+# Ensure .env.local contains at minimum:
+# NEXT_PUBLIC_SUPABASE_URL=<provided value>
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=<provided value>
+# NEXT_PUBLIC_APP_URL=http://localhost:3000
+# SUPABASE_SERVICE_ROLE_KEY=<manual placeholder until you paste real value>
 
-# 4. Run DB schema in Supabase SQL Editor
-# → Paste contents of supabase/migrations/001_initial_schema.sql
+# 4. Run DB schema and RPC migrations in Supabase SQL Editor (in order)
+# → Run: supabase/migrations/001_initial_schema.sql
+# → Run: supabase/migrations/2026031102_complete_session_rpc.sql
+# → Run: supabase/migrations/2026031103_resolve_circle_by_invite_code_rpc.sql
+# → Run: supabase/migrations/2026031104_complete_session_admin_rpc.sql
 
 # 5. Seed default rooms
 # → Paste contents of supabase/seed.sql in Supabase SQL Editor
