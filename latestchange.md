@@ -162,3 +162,9 @@ Why: The blank page happened because deployment was using Next.js-style build/ou
   - Added explicit reminder to set env vars for both Production and Preview.
 
 Why: The previous change fixed build pipeline guidance, but deployment can still appear as a blank page when env vars are missing at runtime. This hardening makes the issue visible to users and aligns docs/scripts with the exact Cloudflare UI flow being used.
+
+## 2026-03-11 (Design System v2 palette class migration on landing page)
+- Replaced all Tailwind arbitrary CSS variable classes in `app/page.tsx` (e.g., `bg-[var(--...)]`, `text-[var(--...)]`, `border-[var(--...)]`) with explicit Design System v2 palette classes.
+- Mapped token usage to hardcoded colors across all states and variants, including hover and opacity modifiers (`/95`, `/40`, `/10`) and border styles (`border-white/10`, `border-white/[0.06]`, `border-white/[0.22]`).
+
+Why: This removes runtime dependency on CSS variable token references in the landing page and aligns every page-level className with the requested Design System v2 hardcoded palette standard.
