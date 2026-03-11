@@ -1,5 +1,3 @@
-import 'server-only'
-
 import { createClient } from '@supabase/supabase-js'
 
 function getRequiredEnv(name: 'NEXT_PUBLIC_SUPABASE_URL' | 'SUPABASE_SERVICE_ROLE_KEY') {
