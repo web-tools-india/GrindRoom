@@ -1,5 +1,12 @@
 # Latest Changes
 
+## 2026-03-11 (circle create/join API handlers)
+- Added `app/api/circles/create/route.ts` with authenticated `POST` logic that accepts `{ name }`, generates an uppercase 8-character invite code, creates a `circles` row, and inserts the creator into `circle_members` using server-derived `user.id`.
+- Added retry logic for invite-code uniqueness collisions and structured JSON error responses (`{ error: { code, message, details } }`) for auth, validation, and persistence failures.
+- Added `app/api/circles/join/route.ts` with authenticated `POST` logic that accepts `{ invite_code }`, resolves the circle by invite code, returns 404 when absent, and inserts membership with graceful duplicate handling.
+
+Why: This enables secure, production-ready circle creation/join flows while preventing client-side identity spoofing and giving frontend code predictable, machine-readable API errors.
+
 ## 2026-03-11
 - Scaffolded the Next.js App Router project with TypeScript, Tailwind, and ESLint baseline files.
 - Added Supabase browser and server client helpers in `lib/supabase/` using `@supabase/ssr` patterns for Cloudflare-compatible SSR auth handling.
