@@ -1,6 +1,13 @@
 # Latest Changes
 
 
+## 2026-03-11 (Next.js Server Actions allowed origins expansion)
+- Updated `next.config.ts` `experimental.serverActions.allowedOrigins` to include all required hostnames: `grindroom.pages.dev`, `localhost:3000`, and `grindroom.app`.
+- Kept the rest of the Next.js config unchanged to avoid unintended runtime/build behavior changes.
+
+Why: Server Actions origin checks must explicitly allow each trusted domain used across local development and production/custom domains. This prevents blocked action requests while preserving origin-based security controls.
+
+
 ## 2026-03-11 (root layout html lang + body typography utility classes)
 - Updated `app/layout.tsx` root markup to set `<html lang="en">`.
 - Updated the root `<body>` element to use `className="font-sans antialiased"` while keeping children rendering unchanged.
