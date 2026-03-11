@@ -168,3 +168,9 @@ Why: The previous change fixed build pipeline guidance, but deployment can still
 - Mapped token usage to hardcoded colors across all states and variants, including hover and opacity modifiers (`/95`, `/40`, `/10`) and border styles (`border-white/10`, `border-white/[0.06]`, `border-white/[0.22]`).
 
 Why: This removes runtime dependency on CSS variable token references in the landing page and aligns every page-level className with the requested Design System v2 hardcoded palette standard.
+
+## 2026-03-11 (page palette audit: confirmed no Tailwind CSS variable color classes in key app pages)
+- Audited `app/rooms/page.tsx`, `app/dashboard/page.tsx`, `app/circles/page.tsx`, `app/room/[id]/page.tsx`, and `app/profile/[username]/page.tsx` for `bg-[var(--...)]`, `text-[var(--...)]`, and `border-[var(--...)]` class usage.
+- Confirmed these pages already use hardcoded hex-based Tailwind classes for page/card/text/border colors, so no page-level palette class changes were required.
+
+Why: This validates the requested migration guardrail for the specified pages while preserving the currently allowed hardcoded palette and avoiding unnecessary churn.
