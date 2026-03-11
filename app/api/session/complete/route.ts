@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { getSupabaseAdminClient } from '@/lib/supabase/admin'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
 interface SessionCompleteBody {
@@ -22,6 +23,7 @@ interface CompleteSessionRpcRow {
 
 export async function POST(request: Request) {
   const supabase = await getSupabaseServerClient()
+  const supabaseAdmin = getSupabaseAdminClient()
 
   const {
     data: { user },
@@ -49,9 +51,31 @@ export async function POST(request: Request) {
     )
   }
 
-  const { data, error } = await supabase
-    .rpc('complete_session', {
+  const { data: ownedSession, error: ownershipError } = await supabase
+    .from('sessions')
+    .select('id')
+    .eq('id', sessionId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (ownershipError) {
+    return NextResponse.json(
+      {
+        error: 'Failed to validate session ownership',
+        details: ownershipError.message,
+      },
+      { status: 500 },
+    )
+  }
+
+  if (!ownedSession) {
+    return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+  }
+
+  const { data, error } = await supabaseAdmin
+    .rpc('complete_session_admin', {
       p_session_id: sessionId,
+      p_user_id: user.id,
       p_completed: completed,
     })
     .single<CompleteSessionRpcRow>()

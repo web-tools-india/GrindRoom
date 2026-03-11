@@ -84,3 +84,10 @@ Why: Session completion and streak progression must be enforced server-side (not
 - Updated `app/api/session/complete/route.ts` to call the RPC and map database error codes to stable API responses.
 
 Why: The prior approach could leave `sessions` and `profiles` out of sync on partial failures and concurrent requests. Moving logic into one DB transaction prevents that inconsistency and makes retries safe.
+
+## 2026-03-11 (server-only Supabase admin client + elevated session completion writes)
+- Added `lib/supabase/admin.ts` as a dedicated server-only Supabase admin helper built with `createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)` semantics and explicit runtime guard rails for missing environment variables.
+- Updated `app/api/session/complete/route.ts` to keep user authentication and ownership checks on the request-scoped server client first, then execute completion/streak writes through the admin client for elevated server-side persistence.
+- Added `supabase/migrations/2026031104_complete_session_admin_rpc.sql` with a `SECURITY DEFINER` RPC (`complete_session_admin`) that keeps row-locking, idempotency, and atomic streak/session updates while restricting execution to `service_role` only.
+
+Why: This introduces a safe, explicit path for privileged writes without exposing service credentials to the client and preserves strict ownership validation before any elevated database operation runs.
