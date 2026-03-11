@@ -1,6 +1,19 @@
 # Latest Changes
 
 
+## 2026-03-11 (room page session manager wiring)
+- Added `components/room/RoomSessionManager.tsx` as a client-side room session orchestrator that:
+  - starts sessions by inserting into `sessions` with the browser Supabase client,
+  - stores local active session state (`id`, `task`, `timerEndAt`),
+  - completes sessions through `/api/session/complete`,
+  - displays `CompletionModal` with `actual_minutes` from the completion response,
+  - switches between `SessionStartCard` and `ActiveSessionCard` from local active state.
+- Updated `app/room/[id]/page.tsx` to render `<RoomSessionManager roomId={id} userId={user?.id ?? null} />` inside the right-hand `<aside>` and removed placeholder preview session card wiring/imports.
+- Kept all existing room/profile/session fetch queries and auth retrieval behavior unchanged in the room page server component.
+
+Why: The room sidebar previously showed disconnected placeholder start/active cards. This change introduces a real client-side session lifecycle for starting and completing focus sessions without altering the existing server-rendered room data and auth flow.
+
+
 ## 2026-03-11 (Next.js Server Actions allowed origins expansion)
 - Updated `next.config.ts` `experimental.serverActions.allowedOrigins` to include all required hostnames: `grindroom.pages.dev`, `localhost:3000`, and `grindroom.app`.
 - Kept the rest of the Next.js config unchanged to avoid unintended runtime/build behavior changes.
