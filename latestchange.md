@@ -1,5 +1,11 @@
 # Latest Changes
 
+## 2026-03-11 (design token expansion + body font standardization)
+- Updated `app/globals.css` `body` font stack to use `font-family: 'DM Sans', sans-serif;` for consistent typography with the imported Google font.
+- Expanded the `@theme inline` token map to include full semantic color aliases for surface layers, status/action colors, and text hierarchy (`--color-surface`, `--color-raised`, `--color-hover`, `--color-primary`, `--color-primary-hover`, `--color-success`, `--color-warning`, `--color-danger`, `--color-text-high`, `--color-text-mid`, `--color-text-low`) while keeping existing `:root` variables unchanged.
+
+Why: This makes Tailwind theme token usage more complete and scalable across components while preserving the current underlying palette and avoiding breaking variable renames.
+
 ## 2026-03-11 (lockfile regeneration for Cloudflare npm ci/EUSAGE failure)
 - Ran `npm install` to regenerate `package-lock.json` so it fully matches `package.json` dependency declarations, including Cloudflare/OpenNext toolchain packages added recently.
 - Verified `lib/supabase/admin.ts` already starts with `import { createClient } from '@supabase/supabase-js'` and does not include `import 'server-only'`, so no code change was needed in that file.
