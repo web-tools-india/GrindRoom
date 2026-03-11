@@ -1,9 +1,19 @@
+import { randomInt } from 'node:crypto'
+
 import { NextResponse } from 'next/server'
 
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
 interface CreateCircleBody {
   name?: string
+}
+
+interface CircleRow {
+  id: string
+  name: string
+  invite_code: string
+  created_by: string
+  created_at: string
 }
 
 const INVITE_CODE_LENGTH = 8
@@ -27,7 +37,7 @@ function generateInviteCode() {
   let code = ''
 
   for (let i = 0; i < INVITE_CODE_LENGTH; i += 1) {
-    const randomIndex = Math.floor(Math.random() * INVITE_CODE_CHARS.length)
+    const randomIndex = randomInt(INVITE_CODE_CHARS.length)
     code += INVITE_CODE_CHARS[randomIndex]
   }
 
@@ -60,15 +70,7 @@ export async function POST(request: Request) {
     return errorResponse(400, 'invalid_name', 'Request body must include a non-empty `name`.')
   }
 
-  let createdCircle:
-    | {
-        id: string
-        name: string
-        invite_code: string
-        created_by: string
-        created_at: string
-      }
-    | null = null
+  let createdCircle: CircleRow | null = null
 
   for (let attempt = 0; attempt < MAX_INVITE_CODE_RETRIES; attempt += 1) {
     const inviteCode = generateInviteCode()
@@ -81,7 +83,7 @@ export async function POST(request: Request) {
         created_by: user.id,
       })
       .select('id, name, invite_code, created_by, created_at')
-      .single()
+      .single<CircleRow>()
 
     if (error?.code === '23505') {
       continue

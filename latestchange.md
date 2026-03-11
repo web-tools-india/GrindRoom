@@ -1,5 +1,12 @@
 # Latest Changes
 
+## 2026-03-11 (circle invite security + RLS-safe join lookup hardening)
+- Updated `app/api/circles/create/route.ts` to generate invite codes with cryptographic randomness using Node `crypto.randomInt` instead of `Math.random()`.
+- Added `supabase/migrations/2026031103_resolve_circle_by_invite_code_rpc.sql` introducing `public.resolve_circle_by_invite_code(text)` as a `SECURITY DEFINER` RPC that allows authenticated users to resolve a circle by invite code before they are members.
+- Updated `app/api/circles/join/route.ts` to call the new RPC for invite-code resolution and map RPC auth/not-found errors to structured API responses.
+
+Why: This fixes two production security/reliability gaps from review—invite codes are now generated with cryptographically secure entropy, and first-time joiners can resolve valid invite codes under RLS without exposing service-role credentials.
+
 ## 2026-03-11 (circle create/join API handlers)
 - Added `app/api/circles/create/route.ts` with authenticated `POST` logic that accepts `{ name }`, generates an uppercase 8-character invite code, creates a `circles` row, and inserts the creator into `circle_members` using server-derived `user.id`.
 - Added retry logic for invite-code uniqueness collisions and structured JSON error responses (`{ error: { code, message, details } }`) for auth, validation, and persistence failures.

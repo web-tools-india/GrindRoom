@@ -6,6 +6,14 @@ interface JoinCircleBody {
   invite_code?: string
 }
 
+interface CircleInviteLookupRow {
+  id: string
+  name: string
+  invite_code: string
+  created_by: string
+  created_at: string
+}
+
 function errorResponse(status: number, code: string, message: string, details?: string) {
   return NextResponse.json(
     {
@@ -46,17 +54,21 @@ export async function POST(request: Request) {
   }
 
   const { data: circle, error: circleLookupError } = await supabase
-    .from('circles')
-    .select('id, name, invite_code, created_by, created_at')
-    .eq('invite_code', inviteCode)
-    .maybeSingle()
+    .rpc('resolve_circle_by_invite_code', {
+      p_invite_code: inviteCode,
+    })
+    .single<CircleInviteLookupRow>()
 
   if (circleLookupError) {
-    return errorResponse(500, 'circle_lookup_failed', 'Failed to lookup circle.', circleLookupError.message)
-  }
+    if (circleLookupError.code === 'P0002') {
+      return errorResponse(404, 'circle_not_found', 'No circle found for this invite code.')
+    }
 
-  if (!circle) {
-    return errorResponse(404, 'circle_not_found', 'No circle found for this invite code.')
+    if (circleLookupError.code === '42501') {
+      return errorResponse(401, 'unauthorized', 'You must be logged in to join a circle.')
+    }
+
+    return errorResponse(500, 'circle_lookup_failed', 'Failed to lookup circle.', circleLookupError.message)
   }
 
   const { error: joinError } = await supabase.from('circle_members').insert({
