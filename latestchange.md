@@ -1,5 +1,11 @@
 # Latest Changes
 
+## 2026-03-11 (lockfile regeneration for Cloudflare npm ci/EUSAGE failure)
+- Ran `npm install` to regenerate `package-lock.json` so it fully matches `package.json` dependency declarations, including Cloudflare/OpenNext toolchain packages added recently.
+- Verified `lib/supabase/admin.ts` already starts with `import { createClient } from '@supabase/supabase-js'` and does not include `import 'server-only'`, so no code change was needed in that file.
+
+Why: Cloudflare Pages install step failed with npm `EUSAGE` because lockfile and manifest drifted. Regenerating the lockfile restores deterministic installs for CI/deploy.
+
 ## 2026-03-11 (Cloudflare next-on-pages edge runtime compliance across all non-static routes)
 - Added `export const runtime = "edge"` to all non-static App Router pages and route handlers required by Cloudflare build output: `app/page.tsx`, `app/rooms/page.tsx`, `app/dashboard/page.tsx`, `app/circles/page.tsx`, `app/room/[id]/page.tsx`, `app/profile/[username]/page.tsx`, `app/api/circles/create/route.ts`, `app/api/circles/join/route.ts`, `app/api/session/complete/route.ts`, and `app/auth/callback/route.ts`.
 - Updated `app/api/circles/create/route.ts` invite code generation to use Web Crypto (`crypto.getRandomValues`) instead of Node-only `node:crypto/randomInt` so the route works under Edge runtime.
