@@ -178,20 +178,19 @@ Why: The blank page happened because deployment was using Next.js-style build/ou
 Why: The previous change fixed build pipeline guidance, but deployment can still appear as a blank page when env vars are missing at runtime. This hardening makes the issue visible to users and aligns docs/scripts with the exact Cloudflare UI flow being used.
 
 ## 2026-03-11 (Design System v2 palette class migration on landing page)
-- Replaced all Tailwind arbitrary CSS variable classes in `app/page.tsx` (e.g., `bg-[var(--...)]`, `text-[var(--...)]`, `border-[var(--...)]`) with explicit Design System v2 palette classes.
+- Replaced all Tailwind arbitrary CSS variable classes in `app/page.tsx` (e.g., `bg-[var(--token)]`, `text-[var(--token)]`, `border-[var(--token)]`) with explicit Design System v2 palette classes.
 - Mapped token usage to hardcoded colors across all states and variants, including hover and opacity modifiers (`/95`, `/40`, `/10`) and border styles (`border-white/10`, `border-white/[0.06]`, `border-white/[0.22]`).
 
 Why: This removes runtime dependency on CSS variable token references in the landing page and aligns every page-level className with the requested Design System v2 hardcoded palette standard.
 
 ## 2026-03-11 (page palette audit: confirmed no Tailwind CSS variable color classes in key app pages)
-- Audited `app/rooms/page.tsx`, `app/dashboard/page.tsx`, `app/circles/page.tsx`, `app/room/[id]/page.tsx`, and `app/profile/[username]/page.tsx` for `bg-[var(--...)]`, `text-[var(--...)]`, and `border-[var(--...)]` class usage.
+- Audited `app/rooms/page.tsx`, `app/dashboard/page.tsx`, `app/circles/page.tsx`, `app/room/[id]/page.tsx`, and `app/profile/[username]/page.tsx` for `bg-[var(--token)]`, `text-[var(--token)]`, and `border-[var(--token)]` class usage.
 - Confirmed these pages already use hardcoded hex-based Tailwind classes for page/card/text/border colors, so no page-level palette class changes were required.
 
 Why: This validates the requested migration guardrail for the specified pages while preserving the currently allowed hardcoded palette and avoiding unnecessary churn.
 
-## 2026-03-11 (dashboard username onboarding gate after OAuth callback)
-- Updated `app/auth/callback/route.ts` to complete OAuth exchange, fetch the authenticated user, read `profiles.username`, and redirect to `/dashboard?setup=1` when username is missing (otherwise `/dashboard`).
-- Added `components/dashboard/DashboardClient.tsx` as a client-side coordinator for username onboarding modal state.
-- Updated `app/dashboard/page.tsx` to read `searchParams`, derive `needsUsernameSetup` from `setup=1`, and render `DashboardClient` at the top-level dashboard layout.
+## 2026-03-11 (fix CSS parsing crash from Tailwind class extraction in changelog text)
+- Updated historical `latestchange.md` examples that used placeholder arbitrary classes like `border-[var(--token)]` with named tokens instead of placeholder dots.
+- Kept the meaning of the changelog entries the same; only replaced placeholder syntax that Tailwind/Turbopack interpreted as a real class and generated invalid CSS from placeholder token text.
 
-Why: This ensures users without usernames are routed into a required setup flow immediately after authentication, while keeping username persistence in a client component that can refresh dashboard server data after save.
+Why: Tailwind v4 source scanning includes markdown content, so placeholder class text in docs can accidentally generate invalid utility CSS and break local dev/build parsing.
