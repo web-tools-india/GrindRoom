@@ -54,3 +54,19 @@ Why: The app shell should reflect GrindRoom branding and dark-mode defaults from
 - Kept all new UI dark-token aligned using the requested palette values (`#0F172A`, `#1E293B`, `#334155`, etc.).
 
 Why: This creates the missing product structure needed to ship the authenticated multi-page GrindRoom experience, while enforcing strict typing and resilient loading/empty UI behavior for data-driven areas.
+
+## 2026-03-11 (session completion API with UTC streak updates)
+- Added `app/api/session/complete/route.ts` with a secure `POST` handler that validates server-side auth, parses `{ session_id, completed }`, verifies session ownership, and blocks duplicate completion for already-ended sessions.
+- Implemented elapsed-time calculation from `started_at` to current server time and persisted session completion fields (`ended_at`, `completed`, `actual_minutes`) in `sessions`.
+- Added profile stat updates in `profiles` with UTC day-based streak logic for completed sessions (today/yesterday/reset rules), while always incrementing `total_focus_minutes` and only incrementing `total_sessions` when `completed=true`.
+- Returned structured JSON responses with updated profile stats and explicit HTTP error statuses for auth, validation, ownership, not-found, conflict, and persistence failures.
+
+Why: Session completion and streak progression must be enforced server-side (not client-trusted) to keep focus analytics and streaks reliable under RLS and production auth constraints.
+
+## 2026-03-11 (session completion race-condition + atomicity hardening)
+- Reworked session completion to use a transactional Postgres RPC (`public.complete_session`) instead of separate route-level writes.
+- Added `supabase/migrations/2026031102_complete_session_rpc.sql` with row-level locking and `ended_at IS NULL` guarded update to prevent double-counting from concurrent requests.
+- Added idempotent behavior for already-completed sessions so retries return current session/profile aggregates safely without incrementing totals again.
+- Updated `app/api/session/complete/route.ts` to call the RPC and map database error codes to stable API responses.
+
+Why: The prior approach could leave `sessions` and `profiles` out of sync on partial failures and concurrent requests. Moving logic into one DB transaction prevents that inconsistency and makes retries safe.
