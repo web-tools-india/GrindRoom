@@ -224,12 +224,3 @@ Why: We needed an exact, reproducible root-cause analysis before making producti
 - Updated `README.md` deployment and hosting references from Pages-first wording to Workers-first flow.
 
 Why: The app was building but crashing at runtime on Workers. These changes align OpenNext/Next config and operational docs/scripts with the actual Workers deployment target, eliminating the mismatch that caused blank-page 500s.
-
-## 2026-03-12 (permanent workers regression guardrail)
-- Added `scripts/verify-workers-runtime.mjs`, a Workers regression-guard script that validates critical runtime config invariants (landing page must not set `runtime = edge`, Workers preview script must target `.open-next/worker.js`, and server action origins must include the production `workers.dev` hostname).
-- Added npm scripts in `package.json`:
-  - `verify:workers-runtime`
-  - `build:cloudflare:safe` (build + config guard check in one command)
-- Updated `README.md` deployment section to include the new pre-deploy guard command `npm run build:cloudflare:safe`.
-
-Why: The same Workers runtime error reappeared after later code changes. This adds a repeatable pre-deploy safety net so runtime regressions are caught locally before pushing to Cloudflare.

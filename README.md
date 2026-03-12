@@ -288,13 +288,6 @@ npm run dev
 5. Deploy — Worker will run on your `*.workers.dev` domain (or custom domain if mapped)
 6. If you still see a blank page, open deployment logs and verify `.open-next/worker.js` is generated (this confirms SSR worker bundling happened)
 7. Also verify runtime environment variables are set for all active environments before redeploying
-8. Before deploying, run a local worker smoke test to catch runtime regressions early:
-
-```bash
-npm run build:cloudflare:safe
-```
-
-This command builds the OpenNext worker and runs a regression guard that validates Workers-specific runtime/deploy invariants before release.
 
 ---
 

@@ -8,9 +8,7 @@
     "build:cloudflare": "npx @opennextjs/cloudflare@latest build",
     "start": "next start",
     "lint": "eslint",
-    "preview:cloudflare": "npx @opennextjs/cloudflare@latest build && wrangler dev .open-next/worker.js --local --port 8787",
-    "verify:workers-runtime": "node scripts/verify-workers-runtime.mjs",
-    "build:cloudflare:safe": "npm run build:cloudflare && npm run verify:workers-runtime"
+    "preview:cloudflare": "npx @opennextjs/cloudflare@latest build && wrangler dev .open-next/worker.js --local --port 8787"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
