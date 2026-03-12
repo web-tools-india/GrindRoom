@@ -1,4 +1,18 @@
 # Latest Changes
+## 2026-03-12 (fix rooms page click freeze after realtime rollout)
+- Fixed `components/room/RoomClient.tsx` by replacing the inline default `initialGrinders = []` prop with a stable module-level `EMPTY_GRINDERS` constant and deriving `hydratedGrinders` from it.
+- Kept realtime hooks mounted in both modes (to preserve React hook ordering), but removed the unstable array reference that was retriggering `useRoomPresence` state sync on every render when `mode="rooms"`.
+
+Why: The inline `[]` default created a new array each render, which made the `useRoomPresence` effect run `setGrinders` repeatedly in rooms mode. That render loop blocked normal interactions, so tapping "Enter Room" appeared to do nothing. The stable fallback reference removes the loop and restores room navigation.
+
+## 2026-03-12 (room realtime presence + active count sync)
+- Updated `app/room/[id]/page.tsx` to fetch room `active_count`, join `profiles(username, avatar_url)` in active sessions query, and pass `roomId`, `initialGrinders`, and `initialActiveCount` into `RoomClient`.
+- Added `hooks/useRoomPresence.ts` to subscribe to Supabase Realtime `postgres_changes` for `sessions` (INSERT/UPDATE) and `rooms` (UPDATE), hydrate new grinder rows with profile data, remove ended sessions, and expose live connection status and active count.
+- Added `hooks/useActiveCountSync.ts` to call `upsert_room_active_count` on mount/unmount so room occupancy counters stay accurate when users enter/leave room pages.
+- Refactored `components/room/RoomClient.tsx` room mode to use realtime hook data, show a subtle Live/Connecting status indicator, and render grinder skeleton rows while realtime is connecting and the list is empty.
+
+Why: Room grinder lists and active counts were frozen at SSR time, making the product feel static. This implementation adds the missing realtime subscription layer so session joins/completions and room occupancy update across browsers without manual refresh.
+
 ## 2026-03-12 (session start moved to server-side API route)
 - Added `app/api/session/start/route.ts` to handle session INSERT server-side using the SSR Supabase client.
 - Updated `components/room/RoomSessionManager.tsx` to call `/api/session/start` via fetch() instead of inserting directly with the browser Supabase client.
