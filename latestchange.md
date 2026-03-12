@@ -1,5 +1,10 @@
 # Latest Changes
+## 2026-03-12 (session start moved to server-side API route)
+- Added `app/api/session/start/route.ts` to handle session INSERT server-side using the SSR Supabase client.
+- Updated `components/room/RoomSessionManager.tsx` to call `/api/session/start` via fetch() instead of inserting directly with the browser Supabase client.
+- Removed unused `getSupabaseBrowserClient` import and `useMemo` from RoomSessionManager since the browser Supabase client is no longer needed in that component.
 
+Why: Browser-side Supabase INSERT was failing with "Unable to start your session" — the browser client couldn't read the SSR HttpOnly auth cookies, so `auth.uid()` was NULL in the RLS `WITH CHECK` policy and the insert was silently denied. Moving session start to a server API route (same proven pattern as `/api/session/complete`) ensures auth is always derived from the server session, which is definitively working.
 
 ## 2026-03-12 (workers.dev 500 fix: OpenNext + Next.js runtime compatibility)
 - Replaced `open-next.config.ts` custom override object with the supported default `defineCloudflareConfig()` export.
