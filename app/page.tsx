@@ -3,94 +3,17 @@ import Link from 'next/link'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { Room } from '@/lib/types'
 
-export const dynamic = 'force-dynamic'
-type HomeRoom = Pick<Room, 'id' | 'name' | 'description' | 'emoji' | 'category' | 'active_count'>
-
-export default async function HomePage() {
-  const hasSupabaseEnv = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) && Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-
-  let liveRooms: HomeRoom[] = []
-
-  if (hasSupabaseEnv) {
-    const supabase = await getSupabaseServerClient()
-
-    const { data, error } = await supabase
-      .from('rooms')
-      .select('id, name, description, emoji, category, active_count')
-      .eq('is_public', true)
-      .order('active_count', { ascending: false })
-      .limit(3)
-
-    if (error) {
-      console.error('Failed to fetch top rooms:', error.message)
-    }
-
-    liveRooms = data ?? []
-  } else {
-    console.error('Landing page running without NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY.')
-  }
-
-  return (
-    <div className="min-h-screen bg-[#08090E] text-[#EEE8D5]">
-      <nav className="border-b border-white/10 bg-[#0E1117]/95">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-          <p className="text-lg font-semibold tracking-wide">GrindRoom</p>
-          <Link
-            href="/rooms"
-            className="rounded-md border border-white/10 px-4 py-2 text-sm font-medium text-[#E8A847] transition-colors hover:border-white/[0.22] hover:text-[#F0B85A]"
-          >
-            Browse Rooms
-          </Link>
-        </div>
-      </nav>
-
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-12">
-        <section className="rounded-[10px] border border-white/10 bg-[#0E1117] p-8 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)]">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#7A8BA8]">Silent shared focus</p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight">
-            Study with others. Without the awkward Zoom calls.
-          </h1>
-          <p className="mt-4 max-w-2xl text-base text-[#7A8BA8]">
-            Declare your task, start your timer, and grind in public rooms where accountability is felt in real time.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              href="/rooms"
-              className="rounded-md bg-[#E8A847] px-5 py-3 text-sm font-semibold text-[#08090E] transition-colors hover:bg-[#F0B85A]"
-            >
-              Join a Room Free
-            </Link>
-            <p className="text-sm text-[#7A8BA8]">Trusted by 4,000+ focused builders and students every week.</p>
-          </div>
-        </section>
-
-        <section className="space-y-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Live public rooms</h2>
-            <Link href="/rooms" className="text-sm font-medium text-[#E8A847] hover:text-[#F0B85A]">
-              See all rooms
-            </Link>
-          </div>
-
-          {!hasSupabaseEnv ? (
-            <div className="rounded-[10px] border border-[#F97316]/40 bg-[#F97316]/10 p-6 text-[#EEE8D5] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)]">
-              <p className="font-medium">Deployment setup incomplete.</p>
-              <p className="mt-2 text-sm text-[#7A8BA8]">
-                Add <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in Cloudflare Workers
-                environment variables, then redeploy.
-              </p>
-            </div>
-          ) : liveRooms.length === 0 ? (
-            <div className="rounded-[10px] border border-white/10 bg-[#0E1117] p-6 text-[#7A8BA8] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)]">
-import Link from 'next/link'
-
-import { getSupabaseServerClient } from '@/lib/supabase/server'
-import type { Room } from '@/lib/types'
-
 export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-type HomeRoom = Pick<Room, 'id' | 'name' | 'description' | 'emoji' | 'category' | 'active_count'>
+interface HomeRoom {
+  id: Room['id']
+  name: Room['name']
+  description: Room['description']
+  emoji: Room['emoji']
+  category: Room['category']
+  active_count: Room['active_count']
+}
 
 export default async function HomePage() {
   const hasSupabaseEnv = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) && Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
