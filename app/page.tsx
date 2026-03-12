@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { Room } from '@/lib/types'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
 interface HomeRoom {
