@@ -6,27 +6,33 @@ interface NavbarProps {
 
 export function Navbar({ username }: NavbarProps) {
   return (
-    <nav className="border-b border-[#334155] bg-[#1E293B]">
+    <nav className="border-b border-white/10 bg-[#0E1117]/95">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-lg font-semibold text-[#F8FAFC]">
+        <Link href="/" className="text-lg font-semibold text-[#EEE8D5]">
           GrindRoom
         </Link>
-        <div className="flex items-center gap-4 text-sm text-[#94A3B8]">
-          <Link href="/rooms" className="transition-colors hover:text-[#6366F1]">
+        <div className="flex items-center gap-4 text-sm text-[#7A8BA8]">
+          <Link href="/rooms" className="transition-colors hover:text-[#E8A847]">
             Rooms
           </Link>
-          <Link href="/dashboard" className="transition-colors hover:text-[#6366F1]">
+          <Link href="/dashboard" className="transition-colors hover:text-[#E8A847]">
             Dashboard
           </Link>
-          <Link href="/circles" className="transition-colors hover:text-[#6366F1]">
+          <Link href="/circles" className="transition-colors hover:text-[#E8A847]">
             Circles
           </Link>
           {username ? (
-            <Link href={`/profile/${username}`} className="rounded-md border border-[#334155] px-3 py-1 text-[#F8FAFC]">
+            <Link
+              href={`/profile/${username}`}
+              className="rounded-md border border-white/10 px-3 py-1 text-[#EEE8D5] transition-colors hover:border-white/[0.22]"
+            >
               @{username}
             </Link>
           ) : (
-            <Link href="/" className="rounded-md border border-[#334155] px-3 py-1 text-[#F8FAFC]">
+            <Link
+              href="/login"
+              className="rounded-md bg-[#E8A847] px-3 py-1 text-sm font-semibold text-[#08090E] transition-colors hover:bg-[#F0B85A]"
+            >
               Sign in
             </Link>
           )}
