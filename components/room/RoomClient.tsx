@@ -18,15 +18,12 @@ interface RoomClientProps {
   initialActiveCount?: number
 }
 
-const EMPTY_GRINDERS: ActiveGrinder[] = []
-
-export function RoomClient({ mode, rooms = [], roomId, initialGrinders, initialActiveCount = 0 }: RoomClientProps) {
+export function RoomClient({ mode, rooms = [], roomId, initialGrinders = [], initialActiveCount = 0 }: RoomClientProps) {
   const [filters, setFilters] = useState<RoomFilters>({ search: '', category: 'all' })
   const [now, setNow] = useState(() => new Date().getTime())
   const realtimeRoomId = mode === 'room' ? (roomId ?? '') : ''
-  const hydratedGrinders = initialGrinders ?? EMPTY_GRINDERS
 
-  const { grinders, activeCount, isConnected } = useRoomPresence(realtimeRoomId, hydratedGrinders, initialActiveCount)
+  const { grinders, activeCount, isConnected } = useRoomPresence(realtimeRoomId, initialGrinders, initialActiveCount)
   useActiveCountSync(realtimeRoomId, activeCount)
 
   useEffect(() => {
