@@ -9,3 +9,9 @@ binding = "ASSETS"
 
 [vars]
 NEXT_PUBLIC_APP_URL = "https://grindroom.nishantborse-2008.workers.dev"
+
+[observability]
+enabled = true
+
+  [observability.logs]
+  invocation_logs = true
