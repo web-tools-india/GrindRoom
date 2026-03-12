@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 import { getSupabaseAdminClient } from '@/lib/supabase/admin'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
-export const runtime = 'edge'
 interface SessionCompleteBody {
   session_id?: string
   completed?: boolean
