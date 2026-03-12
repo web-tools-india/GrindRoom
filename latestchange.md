@@ -1,4 +1,12 @@
 # Latest Changes
+## 2026-03-12 (room realtime presence + active count sync)
+- Updated `app/room/[id]/page.tsx` to fetch room `active_count`, join `profiles(username, avatar_url)` in active sessions query, and pass `roomId`, `initialGrinders`, and `initialActiveCount` into `RoomClient`.
+- Added `hooks/useRoomPresence.ts` to subscribe to Supabase Realtime `postgres_changes` for `sessions` (INSERT/UPDATE) and `rooms` (UPDATE), hydrate new grinder rows with profile data, remove ended sessions, and expose live connection status and active count.
+- Added `hooks/useActiveCountSync.ts` to call `upsert_room_active_count` on mount/unmount so room occupancy counters stay accurate when users enter/leave room pages.
+- Refactored `components/room/RoomClient.tsx` room mode to use realtime hook data, show a subtle Live/Connecting status indicator, and render grinder skeleton rows while realtime is connecting and the list is empty.
+
+Why: Room grinder lists and active counts were frozen at SSR time, making the product feel static. This implementation adds the missing realtime subscription layer so session joins/completions and room occupancy update across browsers without manual refresh.
+
 ## 2026-03-12 (session start moved to server-side API route)
 - Added `app/api/session/start/route.ts` to handle session INSERT server-side using the SSR Supabase client.
 - Updated `components/room/RoomSessionManager.tsx` to call `/api/session/start` via fetch() instead of inserting directly with the browser Supabase client.
