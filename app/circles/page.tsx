@@ -4,7 +4,6 @@ import { Navbar } from '@/components/shared/Navbar'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { Circle } from '@/lib/types'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 type CircleItem = Pick<Circle, 'id' | 'name' | 'invite_code' | 'created_at'>
 

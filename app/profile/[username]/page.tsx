@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import { Navbar } from '@/components/shared/Navbar'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 interface ProfilePageProps {
   params: Promise<{ username: string }>

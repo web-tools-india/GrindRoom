@@ -1,6 +1,13 @@
 # Latest Changes
 
 
+## 2026-03-12 (workers.dev 500 fix: OpenNext + Next.js runtime compatibility)
+- Replaced `open-next.config.ts` custom override object with the supported default `defineCloudflareConfig()` export.
+- Updated `package.json` build script to `next build --webpack` so OpenNext generates a compatible worker bundle for this project (instead of Next 16 Turbopack output that was crashing at runtime).
+- Removed legacy `export const runtime = 'edge'` from app routes/pages that were previously added for `next-on-pages` compatibility, because OpenNext Workers bundling expects these handlers in the default server runtime path.
+
+Why: Workers requests were failing with plain `Internal Server Error` due to OpenNext runtime module-loading failure (`interopDefault` reading `default` from `undefined`). The final stable fix is to use the default OpenNext config + webpack build pipeline + remove stale Pages-era `runtime='edge'` markers that conflict with the current Workers deployment path.
+
 ## 2026-03-11 (room page session manager wiring)
 - Added `components/room/RoomSessionManager.tsx` as a client-side room session orchestrator that:
   - starts sessions by inserting into `sessions` with the browser Supabase client,
