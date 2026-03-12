@@ -10,7 +10,7 @@ GrindRoom is a text-presence, browser-based accountability app for students and 
 
 ## 🧠 What It Does (Core Loop)
 
-1. User lands on `grindroom.pages.dev` → sees live public rooms with active user counts
+1. User lands on `grindroom.nishantborse-2008.workers.dev` → sees live public rooms with active user counts
 2. Clicks a room → signs in with Google (one click)
 3. Declares their task: *"Reading Physics NCERT Ch 12"*
 4. Picks a timer: 25 / 50 / 90 min or custom
@@ -30,7 +30,7 @@ GrindRoom is a text-presence, browser-based accountability app for students and 
 | Backend / DB | Supabase (Postgres) | Managed DB, built-in auth, realtime |
 | Auth | Supabase Auth (Google OAuth) | One-click login, no password flows |
 | Realtime Presence | Supabase Realtime (Presence API) | Who's in the room + their task, live |
-| Hosting | Cloudflare Pages | Fast global CDN, free tier, no Vercel lock-in |
+| Hosting | Cloudflare Workers | Edge runtime hosting with OpenNext, no Vercel lock-in |
 | Payments (later) | Razorpay (INR) + Stripe (USD) | Dual market coverage |
 | Analytics (later) | PostHog | Self-hostable, privacy-friendly |
 | PWA | manifest.json + service worker | Mobile home screen install |
@@ -40,7 +40,7 @@ GrindRoom is a text-presence, browser-based accountability app for students and 
 - ❌ No server actions that bypass Supabase client — use Supabase directly
 - ❌ No light mode — dark mode only, always
 - ❌ No video, no audio, no WebRTC — ever. Text presence only.
-- ✅ Must remain Cloudflare Pages compatible at all times
+- ✅ Must remain Cloudflare Workers compatible at all times
 - ✅ All DB access must go through Supabase with RLS enabled
 
 ---
@@ -272,22 +272,22 @@ npm run dev
 
 ---
 
-## 🌐 Deployment (Cloudflare Pages)
+## 🌐 Deployment (Cloudflare Workers)
 
 1. Push code to GitHub
-2. Go to [pages.cloudflare.com](https://pages.cloudflare.com) → New Project → Connect GitHub repo
+2. Go to [dash.cloudflare.com](https://dash.cloudflare.com) → Workers & Pages → Create application → Workers → Import a repository
 3. Build settings (OpenNext for Cloudflare):
    - Framework preset: **None**
    - Build command: `npx @opennextjs/cloudflare@latest build`
-   - Build output directory: `/` (keep default in UI; `wrangler.toml` sets Pages output to `.open-next/assets`)
-4. Add all environment variables in Cloudflare Pages → Settings → Environment Variables
+   - Build output directory: `/` (OpenNext emits the worker bundle and assets under `.open-next/`)
+4. Add all environment variables in Cloudflare Worker → Settings → Variables
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
-   - `NEXT_PUBLIC_APP_URL` (set this to your Cloudflare domain, e.g. `https://grindroom.pages.dev`)
-5. Deploy — auto-assigned `.pages.dev` domain
-6. If you still see a blank page, open Cloudflare build logs and verify `.open-next/worker.js` is generated (this confirms SSR worker bundling happened)
-7. Also verify runtime environment variables are set for both **Production** and **Preview** before redeploying
+   - `NEXT_PUBLIC_APP_URL` (set this to your Cloudflare domain, e.g. `https://grindroom.nishantborse-2008.workers.dev`)
+5. Deploy — Worker will run on your `*.workers.dev` domain (or custom domain if mapped)
+6. If you still see a blank page, open deployment logs and verify `.open-next/worker.js` is generated (this confirms SSR worker bundling happened)
+7. Also verify runtime environment variables are set for all active environments before redeploying
 
 ---
 

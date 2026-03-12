@@ -207,3 +207,20 @@ Why: This validates the requested migration guardrail for the specified pages wh
 - Kept the meaning of the changelog entries the same; only replaced placeholder syntax that Tailwind/Turbopack interpreted as a real class and generated invalid CSS from placeholder token text.
 
 Why: Tailwind v4 source scanning includes markdown content, so placeholder class text in docs can accidentally generate invalid utility CSS and break local dev/build parsing.
+
+## 2026-03-12 (workers.dev internal-server-error audit)
+- Added `WORKERS_AUDIT_2026-03-12.md` with a deep runtime audit for the `workers.dev` blank-page issue.
+- Reproduced the failure in local Workers runtime and traced it to OpenNext server module loading (`interopDefault` reading `default` from undefined) under current `open-next.config.ts` override mix.
+- Documented secondary migration drift items (Pages-vs-Workers script/docs mismatch and server action origin host mismatch) plus a fix plan for the next implementation step.
+
+Why: We needed an exact, reproducible root-cause analysis before making production changes, so fixes can be applied safely and in the right order.
+
+## 2026-03-12 (workers runtime fix + deployment alignment)
+- Simplified `open-next.config.ts` to the default supported OpenNext Cloudflare config to remove conflicting wrapper/converter overrides that were causing Workers runtime module-loading failures.
+- Updated `package.json` `preview:cloudflare` script to use Worker runtime preview (`wrangler dev .open-next/worker.js --local --port 8787`) instead of Pages static preview.
+- Updated runtime messaging and origin config:
+  - `app/page.tsx` now references Cloudflare Workers in env setup guidance.
+  - `next.config.ts` `serverActions.allowedOrigins` now includes the actual production workers.dev hostname.
+- Updated `README.md` deployment and hosting references from Pages-first wording to Workers-first flow.
+
+Why: The app was building but crashing at runtime on Workers. These changes align OpenNext/Next config and operational docs/scripts with the actual Workers deployment target, eliminating the mismatch that caused blank-page 500s.

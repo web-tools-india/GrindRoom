@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import type { Room } from '@/lib/types'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 type HomeRoom = Pick<Room, 'id' | 'name' | 'description' | 'emoji' | 'category' | 'active_count'>
 
@@ -77,7 +76,7 @@ export default async function HomePage() {
             <div className="rounded-[10px] border border-[#F97316]/40 bg-[#F97316]/10 p-6 text-[#EEE8D5] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)]">
               <p className="font-medium">Deployment setup incomplete.</p>
               <p className="mt-2 text-sm text-[#7A8BA8]">
-                Add <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in Cloudflare Pages
+                Add <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in Cloudflare Workers
                 environment variables, then redeploy.
               </p>
             </div>
